@@ -25,7 +25,7 @@ Console::Console() {
 	while (_continue) {
 		process();
 		string ans;
-		cout << "Recommencer ? (y/n)" << endl;
+		cout << "Recommencer ? (y/n)";
 		ask(ans);
 		(ans != "y") ? _continue = false : 0;
 	}
@@ -58,16 +58,15 @@ void Console::process() {
 
 			while (!input_file.eof()) {
 				Byte oc = input_file.get();
-				if (on_byte % (1024*1024*50) == 0) // Every 50mB
-					cout << "Avancement : " << on_byte * 100 / file_size << "% (" << on_byte / (1024 * 1024) << " mB) \r";
-
+				if (on_byte % (1024 * 1024 * 50) == 0) // Every 50mB
+					show_percentage(20, on_byte, file_size);
 				output_file << static_cast<char>(op(oc, this->dec).to_ulong());
 				on_byte++;
 			}
 
 			input_file.close();
 			output_file.close();
-			cout << "Travail termine ! " << endl;
+			cout << "Travail termine !\t\t\t" << endl;
 		}
 		else {
 			cout << "Impossible d'ouvrir le fichier de sortie !";
@@ -77,6 +76,17 @@ void Console::process() {
 	else {
 		cout << "Impossible d'ouvrir le fichier d'entree !";
 	}
+}
+
+void Console::show_percentage(int const length, long long const& bytepos, long long const& file_size) {
+	int perthous = bytepos * 20 / file_size;
+	cout << "[";
+	for (int i = 0; i < perthous; i++)
+		cout << '/';
+	for (int i = 0; i <= 20 - perthous; i++)
+		cout << '.';
+	cout << "] " << bytepos * 100 / file_size << "% (" << bytepos / (1024 * 1024) << " Mb) \r";
+
 }
 
 void Console::ask_input_file() {
